@@ -102,7 +102,7 @@ function theme_ding_bookmark_remove_form($variables) {
     foreach (element_children($form['items']) as $key) {
       $item_wid = $key;
       // Clean checkbox
-      unset($form['items'][$key]['#title']) ;
+      unset($form['items'][$key]['#title']);
       // Create delete link.
       $delete_link_query = drupal_get_destination() + array('token' => flag_get_token($item_wid));
       $delete_link = array(
@@ -138,7 +138,7 @@ function theme_ding_bookmark_remove_form($variables) {
   if (count($rows)) {
 
     $output .= theme('table', array(
-      'header' => $header ,
+      'header' => $header,
       'rows' => $rows,
       'attributes' => array('width' => 'auto'),
     ));
