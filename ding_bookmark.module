@@ -11,6 +11,8 @@ module_load_include('inc', 'ding_bookmark', 'ding_bookmark.flag_ding_entity');
  * Implements hook_menu().
  */
 function ding_bookmark_menu() {
+  $items = array();
+
   $items['user/%user/bookmarks'] = array(
     'title' => 'Bookmarks',
     'title arguments' => array('Bookmarks', 1),
@@ -21,6 +23,15 @@ function ding_bookmark_menu() {
     'type' => MENU_LOCAL_TASK,
     'file' => 'ding_bookmark.pages.inc',
   );
+
+  $items['ding_bookmark/bookmark/%'] = array(
+    'page callback' => 'ding_bookmark_bookmark_item_ajax',
+    'page arguments' => array(2),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+    'delivery callback' => 'ajax_deliver',
+  );
+
   return $items;
 }
 
@@ -165,6 +176,9 @@ function ding_bookmark_form_flag_form_alter(&$form, &$form_state, $form_id) {
 function ding_bookmark_ding_entity_buttons($type, $entity) {
   // Add 'bookmark' button.
   if ($type == 'ding_entity') {
+    drupal_add_library('system', 'drupal.ajax');
+    drupal_add_library('system', 'jquery.form');
+    drupal_add_js( drupal_get_path('module', 'ding_bookmark') . '/js/ding_bookmark.js');
     $bookmark_flag_button = ding_bookmark_flag_view($type, $entity);
     return array($bookmark_flag_button);
   }
@@ -252,11 +266,17 @@ function ding_bookmark_flag_view($entity_type, $entity) {
   $ding_entity_info = ding_entity_info($entity_type);
   $entity_info = entity_get_info($ding_entity_info['entity_type']);
   $entity_id = $entity->{$entity_info['entity keys']['id']};
-
   // Confirm form will change page title.
   // Store native title.
   $page_native_title = drupal_get_title();
-  $flag_confirm_form = ding_provider_get_form('flag_confirm', 'flag', $bookmark_flag, $entity_id);
+  $flag_confirm_form = array(
+    array(
+      '#prefix' => '<div class="bookmark-link-ajax">',
+      '#suffix' => '</div>',
+      '#markup' => l(t('Add to bookmarks'), 'ding_bookmark/bookmark/' . $entity_id, array('attributes' => array('class' => array('use-ajax')), 'absolute' => TRUE)),
+    )
+  );
+
   // Restore title.
   drupal_set_title($page_native_title);
 
@@ -301,6 +321,51 @@ function ding_bookmark_ctools_plugin_api() {
   list($module, $api) = func_get_args();
   if ($module == "page_manager" && $api == "pages_default") {
     return array("version" => "1");
+  }
+}
+
+/**
+ * Menu entry callback.
+ *
+ * Logic for dynamic bookmark form fetching and using.
+ * Requests bookmark form, appends it to the end of the page markup,
+ * and simulates a click.
+ *
+ * @param $item_id
+ *   Bookmarked item id.
+ * @see ding_bookmark_flag_view().
+ *
+ * @return
+ *   Array of ajax commands.
+ */
+function ding_bookmark_bookmark_item_ajax($item_id) {
+  $commands = array();
+
+  if (!empty($item_id)) {
+    $bookmark_flag = flag_get_flag('bookmark');
+    $bookmark_form = drupal_render(ding_provider_get_form('flag_confirm', 'flag', $bookmark_flag, $item_id));
+    $commands[] = ajax_command_invoke('body', 'append', array($bookmark_form));
+    // Initialize custom drupal js behavior.
+    $commands[] = ding_bookmark_command_init_behavior($item_id);
+  }
+
+  return array('#type' => 'ajax', '#commands' => $commands);
+}
+
+/**
+ * Initialize custom drupal js behaviors.
+ *
+ * @param $item_id
+ *   Bookmarked item id.
+ *   A numeric value to be passed further to JS.
+ * @see ding_bookmark_bookmark_item_ajax().
+ *
+ * @return
+ *   Array of ajax commands in case of $item_id, nothing otherwise.
+ */
+function ding_bookmark_command_init_behavior($item_id = '') {
+  if (!empty($item_id)) {
+    return array('command' => 'init_behavior', 'data' => $item_id);
   }
 }
 
