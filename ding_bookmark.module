@@ -8,6 +8,13 @@
 module_load_include('inc', 'ding_bookmark', 'ding_bookmark.flag_ding_entity');
 
 /**
+ * Implements hook_init().
+ */
+function ding_bookmark_init() {
+  drupal_add_library('system', 'drupal.ajax');
+}
+
+/**
  * Implements hook_menu().
  */
 function ding_bookmark_menu() {
