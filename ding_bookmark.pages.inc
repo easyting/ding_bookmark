@@ -114,14 +114,12 @@ function theme_ding_bookmark_remove_form($variables) {
 
       // reservation button
       $reservation_div = NULL;
-      if ( $form['#builded_entities'][$item_wid]['#object']->ding_entity_type == 'ding_entity' &&
-           $form['#builded_entities'][$item_wid]['#object']->is('reservable')
-         ) {
+      if ($form['#builded_entities'][$item_wid]['#object']->ding_entity_type == 'ding_entity' && $form['#builded_entities'][$item_wid]['#object']->is('reservable')) {
         $reservation_link = array(
           '#prefix' => '<p id="wid' . $item_wid . '" class="ding-entity-button ding-bookmark-reservation-button">',
           '#suffix' => '</p>',
           '#type' => 'markup',
-          '#markup' => l(t('Reserve'), ''),
+          '#markup' => drupal_render(module_invoke('ding_reservation', 'ding_entity_buttons', 'ding_entity', $form['#builded_entities'][$item_wid]['#object'], 'ajax')),
         );
       }
 
@@ -158,18 +156,16 @@ function ding_bookmark_reservation_forms($content_ids) {
     // build item view.
     $item_view_build = ding_bookmark_item_view($entity_type, $entity_id);
     // reservation buttons
-    if ( $item_view_build['#object']->ding_entity_type == 'ding_entity' &&
-         $item_view_build['#object']->is('reservable')
-       ) {
-      $reservation_form = array(ding_provider_get_form('ding_reservation_reserve_form', new DingReservationReservableEntity($item_view_build['#object']), TRUE));
+    if ($item_view_build['#object']->ding_entity_type == 'ding_entity' && $item_view_build['#object']->is('reservable')) {
+      $reservation_form = array(module_invoke('ding_reservation', 'ding_entity_buttons', 'ding_entity', $item_view_build['#object'], 'ajax'));
       $reservation_form[0]['#id'] = 'ding-reservation-reserve-form-wid' . $entity_id;
       $reservation_div = array(
         '#prefix' => '<div class="ding-entity-button-reserve">',
         '#suffix' => '</div>',
         '#type' => 'markup',
-        '#markup' => drupal_render($reservation_form),
+        '#markup' => ''//drupal_render($reservation_form),
       );
-      $reservation_block .= drupal_render($reservation_div);
+      //$reservation_block .= drupal_render($reservation_div);
     }
   }
   return $reservation_block;
