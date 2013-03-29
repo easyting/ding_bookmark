@@ -91,9 +91,11 @@ function theme_ding_bookmark_remove_form($variables) {
   drupal_add_js('misc/tableselect.js');
   $header = array(
     array('class' => array('select-all')),
-    t('Title'),
+    array('data' => t('Title'), 'class' => 'title'),
     '',
   );
+
+  // Add classes to table header columns.
 
   // Create table rows.
   $rows = array();
@@ -112,9 +114,11 @@ function theme_ding_bookmark_remove_form($variables) {
         '#markup' => l(t($flag->unflag_short), 'flag/unflag/bookmark/' . $item_wid, array('query' => $delete_link_query)),
       );
 
-      // reservation button
+      // Reservation button
       $reservation_div = NULL;
       if ($form['#builded_entities'][$item_wid]['#object']->ding_entity_type == 'ding_entity' && $form['#builded_entities'][$item_wid]['#object']->is('reservable')) {
+        // @TODO Create theme function for this, so class can be change in the
+        // theme layer.
         $reservation_link = array(
           '#prefix' => '<p id="wid' . $item_wid . '" class="ding-entity-button ding-bookmark-reservation-button">',
           '#suffix' => '</p>',
@@ -159,6 +163,7 @@ function ding_bookmark_reservation_forms($content_ids) {
     if ($item_view_build['#object']->ding_entity_type == 'ding_entity' && $item_view_build['#object']->is('reservable')) {
       $reservation_form = array(module_invoke('ding_reservation', 'ding_entity_buttons', 'ding_entity', $item_view_build['#object'], 'ajax'));
       $reservation_form[0]['#id'] = 'ding-reservation-reserve-form-wid' . $entity_id;
+      // @TODO Update this, so class can be change in the theme layer.
       $reservation_div = array(
         '#prefix' => '<div class="ding-entity-button-reserve">',
         '#suffix' => '</div>',
