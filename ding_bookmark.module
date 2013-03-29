@@ -141,30 +141,36 @@ function ding_bookmark_flag_default_flags() {
   $flags = array();
   // Add flag "Bookmark".
   $flags['bookmark'] = array(
-      'content_type' => 'ding_entity',
-      'name' => 'bookmark',
-      'title' => 'Bookmarks',
-      'global' => '0',
-      'types' => array(),
-      'flag_short' => 'Add to bookmarks',
-      'flag_long' => '',
-      'flag_message' => 'Added to bookmarks',
-      'flagged_already_message' => 'This item is in bookmarks already.',
-      'unflag_short' => 'Remove from bookmarks',
-      'unflag_long' => '',
-      'unflag_message' => 'Removed from bookmarks',
-      'unflag_denied_text' => '',
-      'link_type' => 'toggle',
-      'roles' => array(
-        'flag' => array(
-          0 => '2',
-        ),
-        'unflag' => array(
-          0 => '2',
-        ),
+    'content_type' => 'ding_entity',
+    'name' => 'bookmark',
+    'title' => 'Bookmarks',
+    'global' => '0',
+    'types' => array(),
+    'flag_short' => 'Add to bookmarks',
+    'flag_long' => '',
+    'flag_message' => 'Added to bookmarks',
+    'flagged_already_message' => 'This item is in bookmarks already.',
+    'unflag_short' => 'Remove from bookmarks',
+    'unflag_long' => '',
+    'unflag_message' => 'Removed from bookmarks',
+    'unflag_denied_text' => '',
+    'link_type' => 'toggle',
+    'roles' => array(
+      'flag' => array(
+        0 => '2',
       ),
-      'api_version' => 2,
-      'locked' => array('name', 'types', 'global', 'link_type', 'roles'),
+      'unflag' => array(
+        0 => '2',
+      ),
+    ),
+    'api_version' => 2,
+    'locked' => array(
+      'name',
+      'types',
+      'global',
+      'link_type',
+      'roles',
+    ),
   );
   return $flags;
 }
@@ -185,7 +191,7 @@ function ding_bookmark_ding_entity_buttons($type, $entity) {
   if ($type == 'ding_entity') {
     drupal_add_library('system', 'drupal.ajax');
     drupal_add_library('system', 'jquery.form');
-    drupal_add_js( drupal_get_path('module', 'ding_bookmark') . '/js/ding_bookmark.js');
+    drupal_add_js(drupal_get_path('module', 'ding_bookmark') . '/js/ding_bookmark.js');
     $bookmark_flag_button = ding_bookmark_flag_view($type, $entity);
     return array($bookmark_flag_button);
   }
@@ -281,7 +287,7 @@ function ding_bookmark_flag_view($entity_type, $entity) {
       '#prefix' => '<div class="bookmark-link-ajax">',
       '#suffix' => '</div>',
       '#markup' => l(t('Add to bookmarks'), 'ding_bookmark/bookmark/' . $entity_id, array('attributes' => array('class' => array('use-ajax')), 'absolute' => TRUE)),
-    )
+    ),
   );
 
   // Restore title.
@@ -356,7 +362,10 @@ function ding_bookmark_bookmark_item_ajax($item_id) {
     $commands[] = ding_bookmark_command_init_behavior($item_id);
   }
 
-  return array('#type' => 'ajax', '#commands' => $commands);
+  return array(
+    '#type' => 'ajax',
+    '#commands' => $commands
+  );
 }
 
 /**
@@ -372,7 +381,10 @@ function ding_bookmark_bookmark_item_ajax($item_id) {
  */
 function ding_bookmark_command_init_behavior($item_id = '') {
   if (!empty($item_id)) {
-    return array('command' => 'init_behavior', 'data' => $item_id);
+    return array(
+      'command' => 'init_behavior',
+      'data' => $item_id,
+    );
   }
 }
 

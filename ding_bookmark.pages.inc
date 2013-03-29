@@ -15,8 +15,8 @@ function ding_bookmark_user_bookmark_page($account) {
     $bookmark_form = drupal_get_form('ding_bookmark_remove_form', $content_ids);
     // render reservation buttons outside bookmark form, so it's valid XHTML
     $reservation_forms = ding_bookmark_reservation_forms($content_ids);
-    drupal_add_js( drupal_get_path('module', 'ding_bookmark') . '/js/ding_bookmark.js' );
-    drupal_add_css(drupal_get_path('module', 'ding_bookmark') . '/css/ding_bookmark.css' );
+    drupal_add_js(drupal_get_path('module', 'ding_bookmark') . '/js/ding_bookmark.js');
+    drupal_add_css(drupal_get_path('module', 'ding_bookmark') . '/css/ding_bookmark.css');
     if (!empty($bookmark_form)) {
       return $reservation_forms . drupal_render($bookmark_form);
     }
@@ -91,7 +91,10 @@ function theme_ding_bookmark_remove_form($variables) {
   drupal_add_js('misc/tableselect.js');
   $header = array(
     array('class' => array('select-all')),
-    array('data' => t('Title'), 'class' => 'title'),
+    array(
+      'data' => t('Title'),
+      'class' => 'title',
+    ),
     '',
   );
 
@@ -168,7 +171,7 @@ function ding_bookmark_reservation_forms($content_ids) {
         '#prefix' => '<div class="ding-entity-button-reserve">',
         '#suffix' => '</div>',
         '#type' => 'markup',
-        '#markup' => ''//drupal_render($reservation_form),
+        '#markup' => '', //drupal_render($reservation_form)
       );
       //$reservation_block .= drupal_render($reservation_div);
     }
