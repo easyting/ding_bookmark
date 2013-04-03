@@ -282,11 +282,23 @@ function ding_bookmark_flag_view($entity_type, $entity) {
   // Confirm form will change page title.
   // Store native title.
   $page_native_title = drupal_get_title();
+
+  // Add destination (for no-js).
+  $link_query = drupal_get_destination() + array('token' => flag_get_token($entity_id));
+
   $flag_confirm_form = array(
     array(
       '#prefix' => '<div class="bookmark-link-ajax">',
       '#suffix' => '</div>',
-      '#markup' => l(t('Add to bookmarks'), 'ding_bookmark/bookmark/' . $entity_id, array('attributes' => array('class' => array('use-ajax')), 'absolute' => TRUE)),
+      '#markup' => l(
+        t('Add to bookmarks'),
+        'ding_bookmark/bookmark/' . $entity_id,
+        array(
+          'attributes' => array('class' => array('use-ajax')),
+          'absolute' => TRUE,
+          'query' => $link_query,
+        )
+      ),
     ),
   );
 
@@ -354,12 +366,26 @@ function ding_bookmark_ctools_plugin_api() {
 function ding_bookmark_bookmark_item_ajax($item_id) {
   $commands = array();
 
+  // Detect AJAX call.
+  $ajax = FALSE;
+  if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+    $ajax = TRUE;
+  }
+
   if (!empty($item_id)) {
     $bookmark_flag = flag_get_flag('bookmark');
-    $bookmark_form = drupal_render(ding_provider_get_form('flag_confirm', 'flag', $bookmark_flag, $item_id));
-    $commands[] = ajax_command_invoke('body', 'append', array($bookmark_form));
-    // Initialize custom drupal js behavior.
-    $commands[] = ding_bookmark_command_init_behavior($item_id);
+
+    if ($ajax) {
+      $bookmark_form = drupal_render(ding_provider_get_form('flag_confirm', 'flag', $bookmark_flag, $item_id));
+      $commands[] = ajax_command_invoke('body', 'append', array($bookmark_form));
+      // Initialize custom drupal js behavior.
+      $commands[] = ding_bookmark_command_init_behavior($item_id);
+    }
+    else {
+      // No-js case: flag without confirmation & redirect back.
+      $bookmark_flag->flag('flag', $item_id);
+      drupal_goto();
+    }
   }
 
   return array(
