@@ -1,12 +1,12 @@
 (function($) {
 
   Drupal.behaviors.bookmarkSubmit = {
-      attach:function(context, settings) {
-          $('.ding-bookmark-reservation-button', context).click(function() {
-              $('#ding-reservation-reserve-form-' + this.id + ' input[type=submit]').mousedown();
-              return false;
-          });
-      }
+    attach:function(context, settings) {
+      $('.ding-bookmark-reservation-button', context).click(function() {
+        $('#ding-reservation-reserve-form-' + this.id + ' input[type=submit]').mousedown();
+        return false;
+      });
+    }
   };
 
   // reload page after closing reservation pop-up
@@ -42,19 +42,17 @@
         Drupal.attachBehaviors(form);
         form.hide();
         // Make sure the behaviors were attached.
-        setTimeout(function() {  
+        setTimeout(function() {
           // Call mousedown(), since click() event is forbidden by #ajax['prevent'].
           form.find('.form-submit').mousedown();
         }, 500);
       }
     });
-    
   }
-  
+
   Drupal.behaviors.ding_bookmark = {
     attach: function (context, settings) {
       Drupal.ajax.prototype.commands.init_behavior = init_behavior;
     }
   };
 })(jQuery);
-

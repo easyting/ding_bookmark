@@ -155,8 +155,6 @@ function theme_ding_bookmark_remove_form($variables) {
   return $output;
 }
 
-
-
 function ding_bookmark_reservation_forms($content_ids) {
   $reservation_block = '';
   foreach ($content_ids as $entity_id => $entity_type) {
@@ -171,14 +169,12 @@ function ding_bookmark_reservation_forms($content_ids) {
         '#prefix' => '<div class="ding-entity-button-reserve">',
         '#suffix' => '</div>',
         '#type' => 'markup',
-        '#markup' => '', //drupal_render($reservation_form)
+        '#markup' => '',
       );
-      //$reservation_block .= drupal_render($reservation_div);
     }
   }
   return $reservation_block;
 }
-
 
 /**
  * Bookmark dummy form.
