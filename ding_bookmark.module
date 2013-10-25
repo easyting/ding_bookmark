@@ -20,17 +20,6 @@ function ding_bookmark_init() {
 function ding_bookmark_menu() {
   $items = array();
 
-  $items['user/%user/bookmarks'] = array(
-    'title' => 'Bookmarks',
-    'title arguments' => array('Bookmarks', 1),
-    'page callback' => 'ding_bookmark_user_bookmark_page',
-    'page arguments' => array(1),
-    'access callback' => 'ding_bookmark_view_access',
-    'access arguments' => array(1),
-    'type' => MENU_LOCAL_TASK,
-    'file' => 'ding_bookmark.pages.inc',
-  );
-
   $items['ding_bookmark/nojs/bookmark/%'] = array(
     'page callback' => 'ding_bookmark_bookmark_item_ajax',
     'page arguments' => array(1, 3),
@@ -50,7 +39,7 @@ function ding_bookmark_menu() {
  */
 function ding_bookmark_menu_alter(&$items) {
   foreach ($items as $path => $item) {
-    if ($path == 'user/%user/bookmarks' || $path == 'user/%pm_arg/bookmarks') {
+    if ($path == 'user/%pm_arg/status/bookmarks') {
       $items[$path]['title callback'] = 'ding_bookmark_menu_item_title';
     }
   }
