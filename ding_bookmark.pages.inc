@@ -9,7 +9,12 @@
  * Menu callback; Display user bookmark items.
  */
 function ding_bookmark_user_bookmark_page($account) {
-  $content_ids = flag_load('bookmark')->get_user_content_ids($account->uid);
+  // Cache bookmarks.
+  $content_ids = ding_session_cache_get('ding_bookmark', 'user-bookmarks');
+  if ($content_ids === FALSE) {
+    $content_ids = flag_load('bookmark')->get_user_content_ids($account->uid);
+    ding_session_cache_set('ding_bookmark', 'user-bookmarks', $content_ids);
+  }
 
   if ($content_ids) {
     $bookmark_form = drupal_get_form('ding_bookmark_remove_form', $content_ids);

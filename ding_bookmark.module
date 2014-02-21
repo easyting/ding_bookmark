@@ -421,3 +421,13 @@ function ding_bookmark_command_init_behavior($item_id = '') {
   }
 }
 
+/**
+ * Implements hook_flag().
+ *
+ * Clear cache on adding/removing bookmark.
+ */
+function ding_bookmark_flag($op, $flag, $content_id, $account, $fcid) {
+  if (($op == 'flag' || $op == 'unflag') && $flag->name = 'bookmark') {
+    ding_session_cache_clear('ding_bookmark', 'user-bookmarks');
+  }
+}
