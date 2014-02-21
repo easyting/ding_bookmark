@@ -431,3 +431,14 @@ function ding_bookmark_flag($op, $flag, $content_id, $account, $fcid) {
     ding_session_cache_clear('ding_bookmark', 'user-bookmarks');
   }
 }
+
+/**
+ * Implements hook_ding_session_cache_defaults().
+ */
+function ding_bookmark_ding_session_cache_defaults() {
+  return array(
+    'titel' => 'Ding Bookmark',
+    'enabled' => TRUE,
+    'expire' => 300,
+  );
+}
