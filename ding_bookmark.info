@@ -8,3 +8,5 @@ dependencies[] = ding_provider
 dependencies[] = ding_popup
 files[] = ding_bookmark.flag_ding_entity.inc
 configure = admin/structure/flags/manage/ding_bookmark
+
+; Optional dependency: artesis_backend
